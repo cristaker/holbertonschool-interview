@@ -1,42 +1,50 @@
 #!/usr/bin/python3
-""" 0. Log parsing
-Write a script that reads stdin line by line and computes metrics
 """
-
-import sys
-import signal
-
-file_size = 0
-http_status = {}
-codes_status = ["200", "301", "400", "401", "403", "404", "405", "500"]
+Write a script that reads stdin line
+by line and computes metrics:
+"""
+from sys import stdin
 
 
-def print_logs_formated(file_size, http_status):
-    """print_logs_formated"""
+state_code = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0
+}
 
-    print("File size: {}".format(file_size))
-    for key in sorted(http_status):
-        print("{}: {}".format(key, http_status[key]))
+size = 0
 
 
-def signal_handler(sig, frame):
-    """signal_handler"""
+def print_list():
+    """Total file size"""
+    print("File size: {}".format(size))
+    for key in sorted(state_code.keys()):
+        if state_code[key]:
+            print("{}: {}".format(key, state_code[key]))
 
-    print_logs_formated(file_size, http_status)
 
-
-for index, line in enumerate(sys.stdin, 1):
-    if line != "":
-        reverted_splitted_line = line.rstrip().split(" ")
-        if len(reverted_splitted_line) >= 2:
-            reverted_splitted_line.reverse()
-            file_size += int(reverted_splitted_line[0])
-            if reverted_splitted_line[1] in codes_status:
-                http_status.setdefault(int(reverted_splitted_line[1]), 0)
-                http_status[int(reverted_splitted_line[1])] += 1
-
-        if index % 10 == 0:
-            print_logs_formated(file_size, http_status)
-
-        signal.signal(signal.SIGINT, signal_handler)
-print_logs_formated(file_size, http_status)
+if __name__ == "__main__":
+    count = 0
+    try:
+        for line in stdin:
+            try:
+                getdata = line.split()
+                size += int(getdata[-1])
+                key_statucode = getdata[-2]
+                if key_statucode in state_code:
+                    state_code[key_statucode] += 1
+            except:
+                pass
+            if count == 9:
+                print_list()
+                count = -1
+            count += 1
+    except KeyboardInterrupt:
+        print_list()
+        raise
+    print_list()
