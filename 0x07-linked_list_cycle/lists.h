@@ -1,25 +1,25 @@
-#include "lists.h"
+#ifndef LISTS_H
+#define LISTS_H
+
+#include <stdlib.h>
+
 /**
- * check_cycle - checks if a singly linked list has a cycle in it.
- * @list: pointer to head of list
- * Return: 1 if is a cycle; 0 is not.
+ * struct listint_s - singly linked list
+ * @n: integer
+ * @next: points to the next node
+ *
+ * Description: singly linked list node structure
+ * for Holberton project
  */
-int check_cycle(listint_t *list)
+typedef struct listint_s
 {
-	listint_t *p1;
-	listint_t *p2;
+	int n;
+	struct listint_s *next;
+} listint_t;
 
-	if (list == NULL)
-		return(0);
+size_t print_listint(const listint_t *h);
+listint_t *add_nodeint(listint_t **head, const int n);
+void free_listint(listint_t *head);
+int check_cycle(listint_t *list);
 
-	p1 = list;
-	p2 = (*list).next;
-
-	for (; p2 != NULL && (*p2).next != NULL; p1 = (*p1).next)
-	{
-		if (p1 == p2)
-			return (1);
-		p2 = (*(*p2).next).next;
-	}
-	return (0);
-}
+#endif /* LISTS_H */
