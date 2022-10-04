@@ -1,48 +1,42 @@
 #!/usr/bin/python3
+""" 0. Log parsing
+Write a script that reads stdin line by line and computes metrics
 """
-Module that parses a log and prints stats to stdout
-"""
-from sys import stdin
 
-status_codes = {
-    "200": 0,
-    "301": 0,
-    "400": 0,
-    "401": 0,
-    "403": 0,
-    "404": 0,
-    "405": 0,
-    "500": 0
-}
+import sys
+import signal
 
-size = 0
+file_size = 0
+http_status = {}
+codes_status = ["200", "301", "400", "401", "403", "404", "405", "500"]
 
 
-def print_stats():
-    """Prints the accumulated logs"""
-    print("File size: {}".format(size))
-    for status in sorted(status_codes.keys()):
-        if status_codes[status]:
-            print("{}: {}".format(status, status_codes[status]))
+def print_logs_formated(file_size, http_status):
+    """print_logs_formated"""
+
+    print("File size: {}".format(file_size))
+    for key in sorted(http_status):
+        print("{}: {}".format(key, http_status[key]))
 
 
-if __name__ == "__main__":
-    count = 0
-    try:
-        for line in stdin:
-            try:
-                items = line.split()
-                size += int(items[-1])
-                if items[-2] in status_codes:
-                    status_codes[items[-2]] += 1
-            except:
-                pass
-            if count == 9:
-                print_stats()
-                count = -1
-            count += 1
-    except KeyboardInterrupt:
-        print_stats()
-        raise
-    print_stats()
-    
+def signal_handler(sig, frame):
+    """signal_handler"""
+
+    print_logs_formated(file_size, http_status)
+
+
+for index, line in enumerate(sys.stdin, 1):
+    if line != "":
+        reverted_splitted_line = line.rstrip().split(" ")
+        if len(reverted_splitted_line) >= 2:
+            reverted_splitted_line.reverse()
+            file_size += int(reverted_splitted_line[0])
+            if reverted_splitted_line[1] in codes_status:
+                http_status.setdefault(int(reverted_splitted_line[1]), 0)
+                http_status[int(reverted_splitted_line[1])] += 1
+
+        if index % 10 == 0:
+            print_logs_formated(file_size, http_status)
+
+        signal.signal(signal.SIGINT, signal_handler)
+print_logs_formated(file_size, http_status)
