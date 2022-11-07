@@ -56,4 +56,3 @@ if __name__ == "__main__":
     row = 0
     queens = []
     queens_potitions(Nq, row, queens)
-    
