@@ -1,58 +1,41 @@
-#!/usr/bin/python3
-
-"""program that solves the N queens problem
-Usage: nqueens N
-where N must be an integer greater or equal to 4
-|The program should print everrow possible solution to the problem
-"""
-
+#!/usr/bin/env python3
+""" The N queens puzzle is the challenge of placing N non-attacking queens on
+    an N×N chessboard. Write a program that solves the N queens problem.
+    Usage: nqueens N
+        If the user called the program with the wrong number of arguments,
+        print Usage: nqueens N, followed by a new line,
+        and exit with the status 1
+    where N must be an integer greater or equal to 4
+        If N is not an integer, print N must be a number,
+        followed by a new line, and exit with the status 1
+        If N is smaller than 4, print N must be at least 4,
+        followed by a new line, and exit with the status 1
+    The program should print every possible solution to the problem
+        One solution per line
+        You don’t have to print the solutions in a specific order
+    You are only allowed to import the sys module """
 import sys
 
 
-def queens_potitions(Nq, row, queens):
-
-    for column in range(Nq):
-        flag = 0
-
-        for queen in queens:
-
-            if abs(column - queen[1]) == abs(row - queen[0]):
-                flag = 1
-                break
-
-            if column == queen[1]:
-                flag = 1
-                break
-
-        if flag == 0:
-            queens.append([row, column])
-
-            if row != Nq - 1:
-                queens_potitions(Nq, row + 1, queens)
-
-            else:
-                print(queens)
-
-            queens.pop()
+def nqueens(n: int):
+    """
+    backtracking
+    """
+    matrix = [[0 for x in range(n)] for y in range(n)]
+    print(str(matrix))
 
 
 if __name__ == "__main__":
-    """receive console arguments and call function"""
-
-    if len(sys.argv) != 2:
+    if len(sys.argv) > 2 or len(sys.argv) < 2:
         print("Usage: nqueens N")
         exit(1)
 
-    if sys.argv[1].isdigit() is False:
+    if not sys.argv[1].isdigit():
         print("N must be a number")
         exit(1)
 
-    Nq = int(sys.argv[1])
-
-    if Nq < 4:
+    if int(sys.argv[1]) < 4:
         print("N must be at least 4")
         exit(1)
 
-    row = 0
-    queens = []
-    queens_potitions(Nq, row, queens)
+    nqueens(int(sys.argv[1]))
