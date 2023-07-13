@@ -1,94 +1,87 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "list.h"
+List *first_node(List **list, char *str)
+{
+	List *new;
 
+	new = malloc(sizeof(List));
+	if (new == NULL)
+		return (NULL);
+	new->str = strdup(str);
+	if (new->str == NULL)
+	{
+		free(str);
+		return (NULL);
+	}
+	new->next = new;
+	new->prev = new;
+	*list = new;
+	return (new);
+}
 /**
- * add_node_end - Adds a new node to the end of a double circular linked list
- *
- * @list:the list to modify
- * @str: the string to copy into the new node
+ * add_node_end - adds node at the end
+ * @list: circular linked list
+ * @str: string to insert
  * Return: Address of the new node, or NULL on failure
  */
 List *add_node_end(List **list, char *str)
 {
-	List *new_node;
-	char *strNode;
+	List *new, *tmp, *aux;
 
-	if (!list)
+	if (list == NULL)
 		return (NULL);
+	if (*list == NULL)
+		return (first_node(list, str));
 
-	new_node = malloc(sizeof(List));
-	if (!new_node)
+	aux = *list;
+	new = malloc(sizeof(List));
+	if (new == NULL)
 		return (NULL);
-
-	strNode = strdup(str);
-	if (!strNode)
+	new->str = strdup(str);
+	if (new->str == NULL)
 	{
-		free(new_node);
+		free(new);
 		return (NULL);
 	}
-	new_node->str = strNode;
+	new->next = aux;
+	new->prev = aux->prev;
+	tmp = aux->prev;
+	aux->prev = new;
+	tmp->next = new;
 
-	if (!*list)
-	{
-		new_node->next = new_node;
-		new_node->prev = new_node;
-		*list = new_node;
-		return (new_node);
-	}
-
-	new_node->next = *list;
-	new_node->prev = (*list)->prev;
-
-	(*list)->prev = new_node;
-	new_node->prev->next = new_node;
-
-	return (new_node);
+	return (new);
 }
 /**
- * add_node_begin - Adds a new node to the beginning of a
- * double circular linked list
- *
- * @list:the list to modify
- * @str: the string to copy into the new node
+ * add_node_begin - adds node at the beginning
+ * @list: circular linked list
+ * @str: string to insert
  * Return: Address of the new node, or NULL on failure
  */
 List *add_node_begin(List **list, char *str)
 {
-	List *new_node;
-	char *strNode;
+	List *new, *tmp, *aux;
 
-	if (!list)
+	if (list == NULL)
 		return (NULL);
+	if (*list == NULL)
+		return (first_node(list, str));
 
-	new_node = malloc(sizeof(List));
-	if (!new_node)
+	aux = *list;
+	new = malloc(sizeof(List));
+	if (new == NULL)
 		return (NULL);
-
-	strNode = strdup(str);
-	if (!strNode)
+	new->str = strdup(str);
+	if (new->str == NULL)
 	{
-		free(new_node);
+		free(new);
 		return (NULL);
 	}
-	new_node->str = strNode;
+	new->next = aux;
+	new->prev = aux->prev;
+	tmp = aux->prev;
+	aux->prev = new;
+	tmp->next = new;
+	*list = new;
 
-	if (*list)
-	{
-		new_node->next = *list;
-		new_node->prev = (*list)->prev;
-		(*list)->prev = new_node;
-		if (new_node->prev)
-			new_node->prev->next = new_node;
-	}
-	else
-	{
-		new_node->prev = new_node;
-		new_node->next = new_node;
-	}
+	return (new);
 
-	*list = new_node;
-
-	return (new_node);
 }
